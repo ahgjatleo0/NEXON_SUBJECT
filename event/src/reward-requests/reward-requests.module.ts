@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RewardRequest, RewardRequestSchema } from './schemas/reward-request.schema';
 import { RewardRequestsService } from './reward-requests.service';
 import { RewardRequestsController } from './reward-requests.controller';
+import { RewardRequest, RewardRequestSchema } from './schemas/reward-request.schema';
+import { Reward, RewardSchema } from '../rewards/schemas/reward.schema'; 
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: RewardRequest.name, schema: RewardRequestSchema },
+      { name: Reward.name, schema: RewardSchema },
     ]),
   ],
   controllers: [RewardRequestsController],
