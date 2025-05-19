@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  auth:
+    build: ./auth
+    container_name: auth_service
+    ports:
+      - "3001:3000"  # auth 서비스는 3001 포트를 사용
+    env_file:
+      - ./auth/.env
+    volumes:
+      - ./auth:/app
+    depends_on:
+      - mongo
+
+  event:
+    build: ./event
+    container_name: event_service
+    ports:
+      - "3002:3000"  # event 서비스는 3002 포트를 사용
+    env_file:
+      - ./event/.env
+    volumes:
+      - ./event:/app
+    depends_on:
+      - mongo
+
+  gateway:
+    build: ./gateway
+    container_name: gateway_service
+    ports:
+      - "3000:3000"  # gateway 서비스는 3000 포트를 사용
+    env_file:
+      - ./gateway/.env
+    volumes:
+      - ./gateway:/app
+    depends_on:
+      - auth
+      - event
+      - mongo
+
+  mongo:
+    image: mongo:6
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # mongo 서비스는 27017 포트를 사용
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
