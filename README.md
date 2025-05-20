@@ -1,215 +1,197 @@
-# 이벤트 / 보상 관리 플랫폼 (Backend)
+# 이벤트 / 보상 관리 플랫폼 구축
 
-## 프로젝트 개요
-이 프로젝트는 **NestJS 기반의 이벤트/보상 관리 시스템**을 구축하는 과제입니다.  
-이 시스템은 **JWT 인증**, **이벤트 생성/관리**, **보상 등록 및 요청**, **관리자 승인** 등의 주요 기능을 포함하고 있습니다.  
-프로젝트는 **Microservices Architecture(MSA)** 패턴을 채택하여 `auth`, `event`, `gateway` 서버를 구성하며, **MongoDB**를 데이터베이스로 사용합니다.
+## 📚 프로젝트 소개
 
-## 기술 스택
-- **Node.js** (v18)
+이 프로젝트는 **이벤트 및 보상 관리 시스템**을 구축하기 위한 백엔드 애플리케이션입니다. 운영자가 이벤트와 보상을 설정하고, 유저가 조건을 충족하면 보상을 요청할 수 있는 시스템을 제공합니다. 이 시스템은 효율적인 보상 관리 및 자동화를 목적으로 개발되었습니다.
+
+## 🎯 목표
+
+- 이벤트 등록, 보상 정의, 유저 보상 요청
+- 관리자와 감사자가 보상 요청을 확인하고 승인/거절할 수 있는 기능 제공
+- **JWT** 인증 및 **권한 제어** (운영자, 관리자, 유저 역할 구분)
+
+## 🔧 기술 스택
+
+- **Node.js** (18.x)
 - **NestJS** (최신 버전)
 - **MongoDB** (데이터베이스)
 - **JWT** (인증)
-- **Docker & Docker Compose** (배포 및 실행)
-- **TypeScript** (개발 언어)
+- **Docker** (배포 및 실행 환경)
+- **TypeScript** (언어)
 
-## 프로젝트 구조
-- **auth_service**: 유저 정보 관리, 로그인, JWT 발급
-- **event_service**: 이벤트 생성, 보상 정의, 보상 요청 처리
-- **gateway_service**: 모든 API 요청의 진입점, 인증 및 권한 검사, 라우팅
-- **mongodb**: 데이터베이스
+## 🧩 프로젝트 구조
 
-### 프로젝트 디렉토리 구조
+이 프로젝트는 **MSA(Microservice Architecture)** 구조를 따릅니다.
+
+### 1. Auth Server
+- **유저 관리** (회원가입, 로그인)
+- **JWT 발급** 및 **역할 관리**
+
+### 2. Event Server
+- **이벤트 생성 및 조회**
+- **보상 정의** (포인트, 아이템, 쿠폰 등)
+- **보상 요청 처리** (유저 요청 검증, 상태 관리)
+
+### 3. Gateway Server
+- **API 요청의 진입점** 역할
+- 모든 요청을 라우팅하고, 인증 및 권한 검사를 담당합니다.
+
+## ⚡️ 실행 방법
+
+### 1. 프로젝트 클론
+
+먼저 GitHub에서 프로젝트를 클론합니다:
 
 ```bash
-NEXON_SUBJECT/
-├── auth/                       # Auth 서버
-├── event/                      # Event 서버
-├── gateway/                    # Gateway 서버
-├── docker-compose.yml          # Docker Compose 구성 파일
-└── README.md                   # 프로젝트 문서
-실행 방법
-1. 프로젝트 클론
-bash
-복사
-편집
-git clone https://github.com/yourusername/nexon_subject.git
-cd nexon_subject
-2. Docker Compose로 실행
-Docker와 Docker Compose를 사용하여 모든 서버를 동시에 실행할 수 있습니다.
+git clone https://github.com/your-username/reword_event.git
+cd reword_event
+```
 
-bash
-복사
-편집
-# 모든 서비스 및 컨테이너를 빌드하고 실행
+2. 환경 설정
+각 서버 (auth, event, gateway)의 의존성을 설치합니다:
+
+```bash
+cd auth && npm install
+cd ../event && npm install
+cd ../gateway && npm install
+```
+
+3. Docker 환경 설정 (선택)
+Docker를 사용하여 각 서버를 하나의 네트워크에서 실행할 수 있습니다. docker-compose.yml 파일을 사용하여 전체 서비스를 한 번에 실행할 수 있습니다.
+
+```bash
 docker-compose up --build
-서비스 설명:
+```
 
-auth_service: 유저 정보 관리, 로그인, JWT 발급
-
-event_service: 이벤트 및 보상 관리
-
-gateway_service: 모든 API 요청을 받아 라우팅, 인증 및 권한 검사
-
-MongoDB: 데이터베이스 (기본 포트: 27017)
-
-3. 서비스 상태 확인
-Auth 서버: http://localhost:3001
-
-Event 서버: http://localhost:3002
-
-Gateway 서버: http://localhost:3000
-
-4. 테스트 코드 실행
-e2e-runner를 사용하여 Docker 환경에서 자동 테스트를 실행할 수 있습니다.
-
+4. 로컬 환경에서 실행
+각 서버를 로컬에서 실행하려면 아래 명령어를 사용합니다:
+```
 bash
-복사
-편집
-docker-compose up --build e2e-runner
-테스트가 성공적으로 실행되면, 해당 테스트 결과는 터미널에 출력됩니다.
+# Auth 서버 실행
+cd auth
+npm run start:dev
+```
 
-5. Docker 컨테이너 로그 확인
-실행 중인 Docker 컨테이너의 로그를 확인하려면 다음 명령어를 사용하세요:
-
+```
 bash
-복사
-편집
-docker logs <container_name>
-예를 들어, gateway_service의 로그를 확인하려면:
+# Event 서버 실행
+cd ../event
+npm run start:dev
+```
 
+```
 bash
-복사
-편집
-docker logs gateway_service
-API 문서
-1. 회원가입 (POST /auth/user/register)
-요청 본문:
+# Gateway 서버 실행
+cd ../gateway
+npm run start:dev
+```
 
-json
-복사
-편집
-{
-  "email": "user1@example.com",
-  "password": "1234",
-  "nickname": "유저1"
-}
-응답: 201 Created
+5. 환경변수 설정
+각 서버의 .env 파일에 환경변수를 설정합니다. 예시:
 
-2. 로그인 (POST /auth/user/login)
-요청 본문:
-
-json
-복사
-편집
-{
-  "email": "user1@example.com",
-  "password": "1234"
-}
-응답: 201 Created, { "access_token": "jwt_token" }
-
-3. 이벤트 등록 (POST /events)
-요청 본문:
-
-json
-복사
-편집
-{
-  "title": "출석 이벤트",
-  "description": "매일 1000포인트",
-  "startAt": "2025-05-20T00:00:00",
-  "endAt": "2025-05-25T00:00:00",
-  "isActive": true
-}
-응답: 201 Created
-
-4. 보상 등록 (POST /rewards)
-요청 본문:
-
-json
-복사
-편집
-{
-  "type": "포인트",
-  "amount": 1000,
-  "description": "출석 보상",
-  "eventId": "event_id"
-}
-응답: 201 Created
-
-5. 보상 요청 생성 (POST /reward-requests)
-요청 본문:
-
-json
-복사
-편집
-{
-  "rewardId": "reward_id"
-}
-응답: 201 Created
-
-6. 보상 요청 상태 변경 (PATCH /reward-requests/{id}/status)
-요청 본문:
-
-json
-복사
-편집
-{
-  "status": "APPROVED"
-}
-응답: 200 OK
-
-문제 해결
-1. 포트 충돌 문제
-Docker에서 실행 중인 서비스가 이미 포트를 사용하고 있을 수 있습니다. 이 경우 다음 명령어로 포트를 확인하고, 충돌을 해결해야 합니다.
-
+```
 bash
-복사
-편집
-netstat -ano | findstr :3001
-2. MongoDB 연결 문제
-MongoDB 연결이 되지 않는 경우, .env 파일에서 MongoDB의 URI 설정을 확인하고, docker-compose.yml에서 MongoDB 서비스를 제대로 연결했는지 확인하세요.
+# auth/.env 예시
+DATABASE_URL=mongodb://localhost:27017/authdb
+JWT_SECRET=your-secret-key
 
-env
-복사
-편집
-MONGO_URI=mongodb://mongodb:27017/your-db-name
-참고 문서
-NestJS 공식 문서
+# event/.env 예시
+DATABASE_URL=mongodb://localhost:27017/eventdb
+JWT_SECRET=your-secret-key
+```
 
-MongoDB 공식 문서
+🧪 테스트 방법
+1. 서버 실행 확인
+서버가 정상적으로 실행되었는지 확인하려면 아래 URL을 통해 각 서버에 접근합니다:
 
-Docker Compose 공식 문서
+Auth Server: http://localhost:3001
 
-프로젝트 유지보수
-문제 발생 시 해결 방법: 각 서비스 컨테이너의 로그를 확인하고, 문제가 발생한 서비스를 재시작합니다.
+Event Server: http://localhost:3002
 
-추가 기능 구현: 서비스 간 통신, 성능 최적화, API 보안 강화 등을 추가로 구현할 수 있습니다.
+Gateway Server: http://localhost:3000
 
-📝 최종 제출
-이 프로젝트는 NestJS + MSA + MongoDB 기반으로 구현되었으며, Docker Compose를 통해 실행 환경을 구성했습니다.
-모든 기능은 Docker 환경에서 테스트되고 실행됩니다.
+2. 테스트 실행
+각 서버의 디렉토리에서 다음 명령어를 실행하여 단위 테스트를 실행할 수 있습니다:
 
-markdown
-복사
-편집
+```bash
+# Auth 서버 테스트
+cd auth
+npm run test
 
----
+# Event 서버 테스트
+cd ../event
+npm run test
 
-### ✅ **설명**
+# Gateway 서버 테스트
+cd ../gateway
+npm run test
+```
 
-1. **프로젝트 개요**:
-   - 요구사항을 정확히 반영한 **백엔드 시스템 설계**.
-   - **Docker Compose**로 서비스를 실행하는 방법을 명시.
+3. API 테스트 (Postman)
+Postman을 사용하여 API를 테스트합니다:
 
-2. **실행 방법**:
-   - **`docker-compose up --build`** 명령어를 통해 서비스를 한 번에 실행하는 방법.
-   - 서비스와 포트 설정을 명확하게 설명.
+POST /auth/register: 유저 등록
 
-3. **API 문서**:
-   - 각 **API 경로**와 **요청/응답 예시**를 정리하여 실제 구현한 기능을 명시.
+POST /auth/login: 로그인 및 JWT 발급
 
-4. **문제 해결**:
-   - **포트 충돌** 및 **MongoDB 연결** 문제 해결 방법을 구체적으로 안내.
+GET /events: 이벤트 조회
 
----
+POST /rewards: 보상 등록
+
+POST /reward-requests: 보상 요청
+
+4. API 예시
+```bash
+# 유저 생성 예시
+POST /auth/register
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "nickname": "user123"
+}
+
+# 로그인 예시
+POST /auth/login
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+# 이벤트 생성 예시
+POST /event/create
+{
+  "name": "Login Event",
+  "condition": "login 3 days",
+  "reward": "100 points",
+  "duration": "2025-06-30"
+}
+
+# 보상 요청 예시
+POST /reward-requests
+{
+  "rewardId": "682b3721b6431e97e1557e56", 
+  "status": "PENDING"
+}
+```
+🔐 인증 및 권한 제어
+JWT 인증: 모든 요청은 JWT 토큰을 통해 인증됩니다.
+
+권한 제어: RolesGuard와 @Roles() 데코레이터를 사용하여 역할에 따른 접근 제어가 이루어집니다.
+
+🚀 성능 최적화 및 확장성
+이 프로젝트는 MSA(Microservice Architecture) 구조로 설계되었으며, 각 서버는 독립적으로 실행되면서도 서로 연결되어 작동합니다. 각 서비스는 확장성을 고려하여 설계되었으며, 향후 추가 기능 및 서비스를 손쉽게 통합할 수 있습니다.
+
+확장 가능성
+새로운 이벤트 유형과 보상 시스템을 추가할 수 있는 유연성
+
+추가 인증 방식(예: OAuth, Social Login) 지원
+
+API rate limiting 및 보안 강화를 통한 대규모 서비스 운영
+
+📝 결론
+이 시스템은 실제 프로덕션 환경에 적용 가능한 효율적인 보상 관리 시스템으로, 이벤트 및 보상 관리의 자동화를 통해 운영 효율성을 크게 개선할 수 있습니다. Docker와 Kubernetes 등을 사용하여 배포 및 운영을 더욱 안정적이고 효율적으로 할 수 있습니다.
+
+### 개선 사항 및 설명:
+- **프로젝트 구조**와 각 서버의 기능에 대한 **자세한 설명**을 추가했습니다.
+- **확장성**과 **성능 최적화** 측면에서 이 프로젝트의 **실제 적용 가능성**을 강조했습니다.
+- **Docker**를 사용한 배포 및 실행 방법, **테스트** 절차를 보다 구체적으로 설명하여 
