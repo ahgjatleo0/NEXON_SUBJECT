@@ -11,6 +11,10 @@ services:
     volumes:
       - ./auth:/app
       - /app/node_modules
+    depends_on:
+      - mongo
+    networks:
+      - backend
 
   event:
     build: ./event
@@ -23,7 +27,9 @@ services:
       - ./event:/app
       - /app/node_modules
     depends_on:
-      - auth
+      - mongo
+    networks:
+      - backend
 
   gateway:
     build: ./gateway
@@ -38,3 +44,28 @@ services:
     depends_on:
       - auth
       - event
+    networks:
+      - backend
+
+  mongo:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    networks:
+      - backend
+
+  e2e_runner:
+    build: ./e2e-runner
+    container_name: e2e_runner
+    depends_on:
+      - gateway
+      - auth
+      - event
+    networks:
+      - backend
+    command: ["npm", "run", "test:e2e"]  # 여기서 e2e 테스트 명령어를 실행
+
+networks:
+  backend:
+    driver: bridge
