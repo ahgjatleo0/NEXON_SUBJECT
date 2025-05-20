@@ -43,7 +43,7 @@
 먼저 GitHub에서 프로젝트를 클론합니다:
 
 ```bash
-git clone https://github.com/your-username/reword_event.git
+git clone https://github.com/ahgjatleo0/NEXON_SUBJECT.git
 cd reword_event
 ```
 
